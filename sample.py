@@ -4,7 +4,7 @@
 # DESCRIPTION: Create a tag in the shared database, and increment its value each second forever, manually written in python
 
 import time
-import sdb
+from thebox import sdb
 
 
 def main():
