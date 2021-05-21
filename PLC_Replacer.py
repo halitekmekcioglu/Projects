@@ -6,7 +6,7 @@ import os
 import time
 from datetime import datetime
 
-#import subprocess
+import subprocess
 
 
 # Each element of the list is a dictionary:
@@ -69,19 +69,19 @@ MQTT_SEND_INTERVAL = 60000
 usleep = lambda x: time.sleep(x / 1000000.0)
 
 
-# # FCT for uptimelogging
-# def logger():
-#     time.sleep(5)
-#     cmd_list = ['uname -r', 'uptime']
-#     out = []
-#     err = []
-#     for cmd in cmd_list:
-#         args = cmd.split()
-#         proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-#         (stdoutdata, stderrdata) = proc.communicate()
-#         out.append(stdoutdata)
-#         err.append(stderrdata)
-#     return out, err
+# FCT for uptimelogging
+def logger():
+    time.sleep(5)
+    cmd_list = ['uname -r', 'uptime']
+    out = []
+    err = []
+    for cmd in cmd_list:
+        args = cmd.split()
+        proc = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (stdoutdata, stderrdata) = proc.communicate()
+        out.append(stdoutdata)
+        err.append(stderrdata)
+    return out, err
 
 
 def synchro_15sec():
