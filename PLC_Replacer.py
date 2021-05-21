@@ -172,7 +172,7 @@ def main():
     os.system("monit restart server")
     time.sleep(5)
     # create a client connection
-    c = sdb.Client('PLC Replacement V2')
+    c = sdb.Client('PLC Replacer')
     while True:
         try:
             c.connect()
