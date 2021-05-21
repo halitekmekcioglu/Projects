@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 import math
 
 from drbox import mainloop, sdb
@@ -9,12 +9,6 @@ from datetime import datetime
 #import subprocess
 
 
-
-# NAME: Modbus <-> MQTT Gateway Coeff Samp
-# DESCRIPTION: Transfer data between Modbus and MQTT Coeff
-# VERSION: 1.4
-
-# Global list for Modbus => MQTT telemetry
 # Each element of the list is a dictionary:
 '''
 {
