@@ -1,9 +1,6 @@
-#!/usr/bin/env python
 
-# NAME: Compute power from pulses (time based)
-# DESCRIPTION: Power is computed from the exact time between pulses. Basic version, no filter
 import time
-from drbox import sdb, mainloop, gpio
+from thebox import sdb, mainloop, gpio
 
 GPIO_PATH = '/sys/class/gpio/gpio42'
 PULSE_WEIGHT = 1 # Wh / pulse
