@@ -389,62 +389,6 @@ def main():
             test = loop.schedule(callback=on_top_user, delay_us=(1000 * cb_data["samp_rate"]), callback_data=cb_data)
 
 
-    # MQTT Command to Modbus management
-    for dict in mqtt_cmd_to_mb_data:
-        err_loop = 0
-        mb_arr_val = ""
-        mb_arr_qual = ""
-        mb_arr_ts = ""
-        mqtt_cmd_name = ""
-        mb_w_flag = ""
-        thebox_tag_mb_val = []
-        thebox_tag_mb_qual = []
-        thebox_tag_mb_ts = []
-        # get the dict element
-        try:
-            mqtt_cmd_name = dict["from"]
-            mb_arr_val = dict["to_val"]
-            mb_arr_ts = dict["to_ts"]
-            mb_arr_qual = dict["to_qual"]
-            mb_w_flag = dict["to_mb_w_flag"]
-        except:
-            print("Error element", dict, "misconfigured")
-            exit(1)
-
-        # get the thebox tag
-        while True:
-            try:
-                thebox_tag_cmd_mqtt = c.get_tag_by_name(mqtt_cmd_name)
-                thebox_tag_cmd_ack = c.get_tag_by_name(mqtt_cmd_name + "_ACK")
-                thebox_tag_cmd_ind = c.get_tag_by_name(mqtt_cmd_name + "_IND")
-                thebox_tag_mb_w_flag = c.get_tag_by_name(mb_w_flag)
-                # Get the modbus array Val, Qual and Ts (if needed)
-                thebox_tag_mb_val.append(c.get_tag_by_name(mb_arr_val + "_1"))
-                thebox_tag_mb_val.append(c.get_tag_by_name(mb_arr_val + "_2"))
-                if mb_arr_qual != "":
-                    thebox_tag_mb_qual.append(c.get_tag_by_name(mb_arr_qual + "_1"))
-                    thebox_tag_mb_qual.append(c.get_tag_by_name(mb_arr_qual + "_2"))
-                if mb_arr_ts != "":
-                    thebox_tag_mb_ts.append(c.get_tag_by_name(mb_arr_ts + "_1"))
-                    thebox_tag_mb_ts.append(c.get_tag_by_name(mb_arr_ts + "_2"))
-                break
-            except:
-                print("Wait for tags of ", dict, "to be created on the server")
-                usleep(1000000)
-                err_loop += 1
-            # Too much error, tag is still not created stop here
-            if err_loop == 10:
-                print("[ERROR] Tags of", dict, "not in the server, module will now exit.")
-                exit(1)
-        # Set the interruption on command change
-        cb_data = {
-            "mb_val": thebox_tag_mb_val,
-            "mb_qual": thebox_tag_mb_qual,
-            "mb_ts": thebox_tag_mb_ts,
-            "mb_flag": thebox_tag_mb_w_flag,
-            "mqtt_ack": thebox_tag_cmd_ack,
-            "mqtt_cmd": thebox_tag_cmd_mqtt
-        }
 
         thebox_tag_cmd_ind.on_event(isr_mqtt_cmd_to_modbus_arr, event=sdb.EVENT_CHANGE, callback_data=cb_data)
         if thebox_tag_cmd_ind.read():
