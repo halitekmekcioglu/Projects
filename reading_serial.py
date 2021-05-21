@@ -24,7 +24,7 @@ def main():
     c.connect()
     
     # create a tag
-    drbox_tag = c.add_tag('serial_line', sdb.DT_BYTE, count=40)
+    thebox_tag = c.add_tag('serial_line', sdb.DT_BYTE, count=40)
 
     # Reading timeout : 1 sec
     # Writing timeour : 1 sec
@@ -40,7 +40,7 @@ def main():
                     line = line[:-1]
                     line = bytearray(line)
                     print(line, type(line), type(line[0]))
-                    drbox_tag.write(string_to_byte(line))
+                    thebox_tag.write(string_to_byte(line))
             
             
 if __name__ == '__main__':
