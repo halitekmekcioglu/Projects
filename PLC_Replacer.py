@@ -182,7 +182,7 @@ def main():
     #print(logger()[0][1])
 
     # Get the global variable
-    global mqtt_cmd_to_mb_data, mb_data_to_mqtt_telem
+    global  mb_data_to_mqtt_telem
 
     # Fct to convert Modbus INT/UINT/DINT to MQTT Teledot (DINT Data)
     def isr_def_modbus_to_mqtt_telem(tag_modbus, data_cb):
