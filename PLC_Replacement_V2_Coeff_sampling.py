@@ -1,7 +1,7 @@
 
 import math
 
-from drbox import mainloop, sdb
+from thebox import mainloop, sdb
 import os
 import time
 from datetime import datetime
@@ -416,7 +416,7 @@ mb_data_to_mqtt_telem = [
 mqtt_cmd_to_mb_data = [
 ]
 # Useful variable
-drbox_mqtt_telem_trigger = None
+thebox_mqtt_telem_trigger = None
 timer_10m = None
 # Time between each MQTT send order (in ms)
 # Each data packet must be under 128kB (AWS broker limit)
@@ -534,7 +534,7 @@ def main():
             c.connect()
             break
         except:
-            print("Wait for the drBox server to be online")
+            print("Wait for the thebox server to be online")
             time.sleep(1000000)
 
     synchro_15sec()
@@ -640,7 +640,7 @@ def main():
 
     # Cyclic timer to send data to the broker
     def on_top_10m(__loop, __next_date):
-        global timer_10m, drbox_mqtt_telem_trigger, MQTT_SEND_INTERVAL
+        global timer_10m, thebox_mqtt_telem_trigger, MQTT_SEND_INTERVAL
         # rearm the timer
         __next_date += 1000 * MQTT_SEND_INTERVAL
         __d = __next_date - time.time() * 1000000
@@ -648,7 +648,7 @@ def main():
 
         # Trigger the MQTT sending
         try:
-            drbox_mqtt_telem_trigger.write(1)
+            thebox_mqtt_telem_trigger.write(1)
             #print("==>Send data to the broker!")
         except:
             print("No TELEMETRY_P_TxReq in server")
@@ -691,18 +691,18 @@ def main():
         except:
             print("Error element", dict, "misconfigured")
             exit(1)
-        # get the drbox tag
+        # get the thebox tag
         while True:
             try:
-                drbox_tag_mb = c.get_tag_by_name(mb_tag_name)
+                thebox_tag_mb = c.get_tag_by_name(mb_tag_name)
                 # Modbus tag is an array?
                 if mb_tag_len == 1:
-                    drbox_tag_mqtt = [c.get_tag_by_name(mqtt_tag_name)]
+                    thebox_tag_mqtt = [c.get_tag_by_name(mqtt_tag_name)]
                 else:
-                    drbox_tag_mqtt = []
+                    thebox_tag_mqtt = []
                     for idx in range(0, mb_tag_len):
                         temp_name = mqtt_tag_name + "_" + str(idx)
-                        drbox_tag_mqtt.append(c.get_tag_by_name(temp_name))
+                        thebox_tag_mqtt.append(c.get_tag_by_name(temp_name))
                 break
             except:
                 print("Wait for tags of ", dict, "to be created on the server")
@@ -716,23 +716,23 @@ def main():
 
         # Set the interruption on modbus data change
         cb_data = {
-            "mqtt_tag": drbox_tag_mqtt,
+            "mqtt_tag": thebox_tag_mqtt,
             "coeff": coeff_fact,
             "oper": coeff_oper,
             "mqtt_tag_type": mqtt_tag_type,
         }
         if samp_mode == "EVENT":
             if mb_tag_type == sdb.DT_REAL:
-                drbox_tag_mb.on_event(isr_modbus_real_to_mqtt_telem, event=sdb.EVENT_CHANGE, callback_data=cb_data)
+                thebox_tag_mb.on_event(isr_modbus_real_to_mqtt_telem, event=sdb.EVENT_CHANGE, callback_data=cb_data)
             elif mb_tag_type == sdb.DT_UDINT:
-                drbox_tag_mb.on_event(isr_modbus_udint_to_mqtt_telem, event=sdb.EVENT_CHANGE, callback_data=cb_data)
+                thebox_tag_mb.on_event(isr_modbus_udint_to_mqtt_telem, event=sdb.EVENT_CHANGE, callback_data=cb_data)
             elif mb_tag_type == sdb.DT_INT or mb_tag_type == sdb.DT_UINT or mb_tag_type == sdb.DT_DINT:
-                drbox_tag_mb.on_event(isr_def_modbus_to_mqtt_telem, event=sdb.EVENT_CHANGE, callback_data=cb_data)
+                thebox_tag_mb.on_event(isr_def_modbus_to_mqtt_telem, event=sdb.EVENT_CHANGE, callback_data=cb_data)
             else:
                 print("Unsupported data type for", dict)
         else:
             cb_data["samp_rate"] = samp_rate*1000
-            cb_data["mb_tag"] = drbox_tag_mb
+            cb_data["mb_tag"] = thebox_tag_mb
             if mb_tag_type == sdb.DT_REAL:
                 cb_data["isr"] = isr_modbus_real_to_mqtt_telem
             elif mb_tag_type == sdb.DT_UDINT:
@@ -753,9 +753,9 @@ def main():
         mb_arr_ts = ""
         mqtt_cmd_name = ""
         mb_w_flag = ""
-        drbox_tag_mb_val = []
-        drbox_tag_mb_qual = []
-        drbox_tag_mb_ts = []
+        thebox_tag_mb_val = []
+        thebox_tag_mb_qual = []
+        thebox_tag_mb_ts = []
         # get the dict element
         try:
             mqtt_cmd_name = dict["from"]
@@ -767,22 +767,22 @@ def main():
             print("Error element", dict, "misconfigured")
             exit(1)
 
-        # get the drbox tag
+        # get the thebox tag
         while True:
             try:
-                drbox_tag_cmd_mqtt = c.get_tag_by_name(mqtt_cmd_name)
-                drbox_tag_cmd_ack = c.get_tag_by_name(mqtt_cmd_name + "_ACK")
-                drbox_tag_cmd_ind = c.get_tag_by_name(mqtt_cmd_name + "_IND")
-                drbox_tag_mb_w_flag = c.get_tag_by_name(mb_w_flag)
+                thebox_tag_cmd_mqtt = c.get_tag_by_name(mqtt_cmd_name)
+                thebox_tag_cmd_ack = c.get_tag_by_name(mqtt_cmd_name + "_ACK")
+                thebox_tag_cmd_ind = c.get_tag_by_name(mqtt_cmd_name + "_IND")
+                thebox_tag_mb_w_flag = c.get_tag_by_name(mb_w_flag)
                 # Get the modbus array Val, Qual and Ts (if needed)
-                drbox_tag_mb_val.append(c.get_tag_by_name(mb_arr_val + "_1"))
-                drbox_tag_mb_val.append(c.get_tag_by_name(mb_arr_val + "_2"))
+                thebox_tag_mb_val.append(c.get_tag_by_name(mb_arr_val + "_1"))
+                thebox_tag_mb_val.append(c.get_tag_by_name(mb_arr_val + "_2"))
                 if mb_arr_qual != "":
-                    drbox_tag_mb_qual.append(c.get_tag_by_name(mb_arr_qual + "_1"))
-                    drbox_tag_mb_qual.append(c.get_tag_by_name(mb_arr_qual + "_2"))
+                    thebox_tag_mb_qual.append(c.get_tag_by_name(mb_arr_qual + "_1"))
+                    thebox_tag_mb_qual.append(c.get_tag_by_name(mb_arr_qual + "_2"))
                 if mb_arr_ts != "":
-                    drbox_tag_mb_ts.append(c.get_tag_by_name(mb_arr_ts + "_1"))
-                    drbox_tag_mb_ts.append(c.get_tag_by_name(mb_arr_ts + "_2"))
+                    thebox_tag_mb_ts.append(c.get_tag_by_name(mb_arr_ts + "_1"))
+                    thebox_tag_mb_ts.append(c.get_tag_by_name(mb_arr_ts + "_2"))
                 break
             except:
                 print("Wait for tags of ", dict, "to be created on the server")
@@ -794,22 +794,22 @@ def main():
                 exit(1)
         # Set the interruption on command change
         cb_data = {
-            "mb_val": drbox_tag_mb_val,
-            "mb_qual": drbox_tag_mb_qual,
-            "mb_ts": drbox_tag_mb_ts,
-            "mb_flag": drbox_tag_mb_w_flag,
-            "mqtt_ack": drbox_tag_cmd_ack,
-            "mqtt_cmd": drbox_tag_cmd_mqtt
+            "mb_val": thebox_tag_mb_val,
+            "mb_qual": thebox_tag_mb_qual,
+            "mb_ts": thebox_tag_mb_ts,
+            "mb_flag": thebox_tag_mb_w_flag,
+            "mqtt_ack": thebox_tag_cmd_ack,
+            "mqtt_cmd": thebox_tag_cmd_mqtt
         }
 
-        drbox_tag_cmd_ind.on_event(isr_mqtt_cmd_to_modbus_arr, event=sdb.EVENT_CHANGE, callback_data=cb_data)
-        if drbox_tag_cmd_ind.read():
+        thebox_tag_cmd_ind.on_event(isr_mqtt_cmd_to_modbus_arr, event=sdb.EVENT_CHANGE, callback_data=cb_data)
+        if thebox_tag_cmd_ind.read():
             print("==> Write the current command", mqtt_cmd_name, "in Modbus")
-            isr_mqtt_cmd_to_modbus_arr(drbox_tag_cmd_ind, cb_data)
+            isr_mqtt_cmd_to_modbus_arr(thebox_tag_cmd_ind, cb_data)
 
     # Get the MQTT Telemetry trigger
-    global drbox_mqtt_telem_trigger, MQTT_SEND_INTERVAL
-    drbox_mqtt_telem_trigger = c.get_tag_by_name("TELEMETRY_P_TxReq")
+    global thebox_mqtt_telem_trigger, MQTT_SEND_INTERVAL
+    thebox_mqtt_telem_trigger = c.get_tag_by_name("TELEMETRY_P_TxReq")
 
     # periodic timer initialisation
     __next_date = time.time() * 1000000 + MQTT_SEND_INTERVAL * 1000
