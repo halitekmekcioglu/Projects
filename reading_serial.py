@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import serial
-from drbox import sdb
+from thebox import sdb
 
 # NAME: Sample 9: serial reading
 # DESCRIPTION: Open, configure and read data from a serial port
