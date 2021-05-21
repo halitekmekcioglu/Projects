@@ -46,24 +46,13 @@ mb_data_to_mqtt_telem = [
 
 ]
 
-# Global list for Modbus => MQTT telemetry
-# Each element of the list is a dictionary:
-'''
-{
-   "from": "MQTT_Command",
-   "to_val": "MB_ARR_Val",
-   "to_qual": "MB_ARR_Qual",
-   "to_ts": "MB_ARR_Ts",
-   "to_mb_w_flag": "MB_CMD_W_FLAG_1"
-}
-'''
-mqtt_cmd_to_mb_data = [
-]
+
 # Useful variable
 thebox_mqtt_telem_trigger = None
 timer_10m = None
 # Time between each MQTT send order (in ms)
 # Each data packet must be under 128kB (AWS broker limit)
+
 MQTT_SEND_INTERVAL = 60000
 
 usleep = lambda x: time.sleep(x / 1000000.0)
@@ -194,44 +183,6 @@ def main():
 
     # Get the global variable
     global mqtt_cmd_to_mb_data, mb_data_to_mqtt_telem
-
-    # ISR to convert MQTT Command to 2 DINT Modbus Arrays
-    def isr_mqtt_cmd_to_modbus_arr(tag_cmd_ind, data_cb):
-        if tag_cmd_ind.read():
-            mqtt_cmd_data = data_cb['mqtt_cmd'].read()
-            cmd_val = mqtt_cmd_data["val"]
-            cmd_qual = mqtt_cmd_data["qual"]
-            cmd_ts = mqtt_cmd_data["ts"]
-
-            mb_val = data_cb['mb_val']
-            mb_qual = data_cb['mb_qual']
-            mb_ts = data_cb['mb_ts']
-
-            for idx in range(0, len(cmd_val)):
-                cmd_val[idx] = dint_to_int(cmd_val[idx])
-            mb_val[0].write(cmd_val[:72])
-            mb_val[1].write(cmd_val[72:143])
-
-            if mb_arr_qual:
-                for idx in range(0, len(cmd_qual)):
-                    cmd_qual[idx] = dint_to_int(cmd_qual[idx])
-                mb_qual[0].write(cmd_qual[:72])
-                mb_qual[1].write(cmd_qual[72:143])
-
-            if mb_arr_ts:
-                for idx in range(0, len(cmd_ts)):
-                    cmd_ts[idx] = dint_to_int(cmd_ts[idx])
-                mb_ts[0].write(cmd_ts[:72])
-                mb_ts[1].write(cmd_ts[72:143])
-
-            # Enable all flag
-            data_cb['mb_flag'].write(1)
-            data_cb['mqtt_ack'].write(1)
-            time.sleep(0.1)
-            data_cb['mb_flag'].write(0)
-        else:
-            # reset ack flag
-            data_cb['mqtt_ack'].write(0)
 
     # Fct to convert Modbus INT/UINT/DINT to MQTT Teledot (DINT Data)
     def isr_def_modbus_to_mqtt_telem(tag_modbus, data_cb):
