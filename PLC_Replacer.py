@@ -340,12 +340,6 @@ def main():
             test = loop.schedule(callback=on_top_user, delay_us=(1000 * cb_data["samp_rate"]), callback_data=cb_data)
 
 
-
-        thebox_tag_cmd_ind.on_event(isr_mqtt_cmd_to_modbus_arr, event=sdb.EVENT_CHANGE, callback_data=cb_data)
-        if thebox_tag_cmd_ind.read():
-            print("==> Write the current command", mqtt_cmd_name, "in Modbus")
-            isr_mqtt_cmd_to_modbus_arr(thebox_tag_cmd_ind, cb_data)
-
     # Get the MQTT Telemetry trigger
     global thebox_mqtt_telem_trigger, MQTT_SEND_INTERVAL
     thebox_mqtt_telem_trigger = c.get_tag_by_name("TELEMETRY_P_TxReq")
