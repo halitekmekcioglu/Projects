@@ -1,6 +1,7 @@
 
 from pprint import pprint
 import xlrd
+import json
 
 #Format must be like this.
 """
@@ -18,13 +19,6 @@ import xlrd
                     "register": 7012
                 }, 
 """
-
-#Some significant notes about script:
-'''
-Excel readed variables are coming as float, therefore we convert them to int
-Script is generating JSON output with apostrophe('). it should be double quotation mark("). otherwise .cfg will crash.
-"enable": true, should be as true as lowercase. Not True or TRUE, otherwise it will make script crash
-'''
 
 #we open the excel file which list of parameters in it
 wb = xlrd.open_workbook("dataset.xlsx")
@@ -78,17 +72,17 @@ def yaz(slave):
             "register": regs
         }
         shlist.append(msg)
-        
+
 #slave ID list FCT
 for z in range(0, len(slavelist)):
     slave = slavelist[z]
 
     yaz(slave)
-    
-#sort_index adding 
+
+#sort_index adding
 for si in range(0, ((rows-1) * len(slavelist))):
     shlist[si]["sort_index"]=si
 
 #pprint(shlist,indent=2)
-print(shlist)
+print(json.dumps(shlist))
 
