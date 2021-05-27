@@ -22,8 +22,8 @@ import xlrd
 #Some significant notes about script:
 '''
 Excel readed variables are coming as float, therefore we convert them to int
-Script is generating JSON output with apostrophe('). it should be double quotation mark("). otherwise .cfg will make drbox crash.
-"enable": true, should be as true as lowercase. Not True or TRUE, otherwise it will make drbox crash
+Script is generating JSON output with apostrophe('). it should be double quotation mark("). otherwise .cfg will crash.
+"enable": true, should be as true as lowercase. Not True or TRUE, otherwise it will make script crash
 '''
 
 #we open the excel file which list of parameters in it
