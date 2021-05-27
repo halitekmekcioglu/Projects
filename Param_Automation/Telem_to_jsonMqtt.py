@@ -6,12 +6,12 @@ import json
 """
 {
             "unitMultiplicator": "1", 
-            "name": "TELEMETRY_P_Invertor_25_Fault_TimeDay", 
+            "name": "Telem_Invertor_25_Fault_TimeDay", 
             "cb": {
                 "addreq": "CLEAR"
             }, 
             "invertSign": "0", 
-            "alias": "TR.CONSUMERS.TR-68.Vaener.Solar.Balikesir.CAP9.Invertor_25_Fault_TimeDay", 
+            "alias": "Telem.CAP9.Invertor_25_Fault_TimeDay", 
             "mode": {
                 "qual": "QUAL", 
                 "addreq": "LOGGER", 
