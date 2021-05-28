@@ -58,7 +58,7 @@ def yaz(slave):
 
         msg = {
             "from": mb_from,
-            "from_type": "?=sdb.DT_"+from_type+"&=?",
+            "from_type": "?=sdb.DT_"+from_type+"&=?", #cfg file does not accept str, it must be: sdb.DT_UINT
             "from_count": 1,
             "to": mqtt_to,
             "coeff": coeff,
